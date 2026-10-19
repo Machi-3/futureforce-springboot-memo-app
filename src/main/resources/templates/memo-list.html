@@ -13,7 +13,7 @@
     <div class="container">
         <div class="header">
             <h1 class="app-title">メモ一覧</h1>
-            <a th:href="@{/memo/new}" class="btn btn-primary">
+            <a th:href="@{/memos/new}" class="btn btn-primary">
                 <i class="ri-add-circle-line"></i> 新規メモ
             </a>
         </div>
@@ -29,8 +29,8 @@
                 <div class="note-card-footer">
                     <p class="note-date" th:text="${#temporals.format(memo.createdAt, 'yyyy/MM/dd HH:mm')}">日付</p>
                     <div class="note-actions">
-                        <a th:href="@{|/memo/detail/${memo.id}|}" class="btn btn-primary">詳細</a>
-                        <a th:href="@{|/memo/delete/${memo.id}|}" class="btn btn-danger">
+                        <a th:href="@{|/memos/detail/${memo.id}|}" class="btn btn-primary">詳細</a>
+                        <a th:href="@{|/memos/delete/${memo.id}|}" class="btn btn-danger">
                             削除
                         </a>
                     </div>
@@ -40,7 +40,7 @@
 
         <div th:if="${memos.isEmpty()}" class="empty-state">
             <p>メモがありません</p>
-            <a th:href="@{/memo/new}" class="btn btn-primary">新しいメモを作成</a>
+            <a th:href="@{/memos/new}" class="btn btn-primary">新しいメモを作成</a>
         </div>
     </div>
     <script th:src="@{/js/common.js}"></script>

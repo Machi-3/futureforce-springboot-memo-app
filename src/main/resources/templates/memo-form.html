@@ -14,11 +14,11 @@
     <div class="container">
         <div class="header">
             <h1 class="app-title" th:text="${memo.id} != null ? 'メモ編集' : 'メモ作成'"></h1>
-            <a th:href="${memo.id} != null ? @{|/memo/detail/${memo.id}|}  : @{/memo}" class="btn btn-outline"><i class="ri-arrow-left-line"></i> 戻る</a>
+            <a th:href="${memo.id} != null ? @{|/memos/detail/${memo.id}|}  : @{/memos}" class="btn btn-outline"><i class="ri-arrow-left-line"></i> 戻る</a>
         </div>
 
         <div class="note-form-card">
-            <form th:action="${memo.id} != null ? @{|/memo/update/${memo.id}|} : @{/memo/create}" th:object="${memo}" method="post">        
+            <form th:action="${memo.id} != null ? @{|/memos/update/${memo.id}|} : @{/memos/create}" th:object="${memo}" method="post">        
                 <div class="form-group">
                     <label>タイトル：</label>
                     <input type="text" th:field="*{title}">
