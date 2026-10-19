@@ -14,11 +14,11 @@
     <div class="container">
         <div class="header">
             <h1 class="app-title" th:text="${memo.id} != null ? 'メモ編集' : 'メモ作成'"></h1>
-            <a th:href="${memo.id} != null ? @{|/memo/detail/${memo.id}|}  : @{/memo}" class="btn btn-outline"><i class="ri-arrow-left-line"></i> 戻る</a>
+            <a th:href="${memo.id} != null ? @{/memo/detail/{id}(id=${memo.id})} : @{/memo}" class="btn btn-outline"><i class="ri-arrow-left-line"></i> 戻る</a>
         </div>
 
         <div class="note-form-card">
-            <form th:action="${memo.id} != null ? @{|/memo/update/${memo.id}|} : @{/memo/create}" th:object="${memo}" method="post">        
+            <form th:action="${memo.id} == null ? @{/memo/create} : @{/memo/update/{id}(id=${memo.id})}" th:object="${memo}" method="post">        
                 <div class="form-group">
                     <label>タイトル：</label>
                     <input type="text" th:field="*{title}">
@@ -30,13 +30,22 @@
                     <textarea th:field="*{content}"></textarea>
                     <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="error-message"></div>
                 </div>
+				
+				<div class="form-group">
+					<label for="priority">優先度：</label>
+					<select id="priority" th:field="*{priority}" class="form-control">
+						<option value="">-- 選択してください --</option>
+						<option th:each="p :  ${priorities}" th:value="${p}" th:text="${p.label}"></option>
+					</select>
+					<div th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}" class="error"></div>
+				</div>
 
+				
                 <div class="form-button-container">
                     <button type="submit" class="btn btn-primary" th:text="${memo.id} != null ? '更新' : '作成'">作成</button>
                 </div>
             </form>
         </div>
-    </div>
     <script th:src="@{/js/common.js}"></script>
 </body>
 
