@@ -4,10 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${memo.id} != null ? 'メモ編集' : 'メモ作成'"></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/priority.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+	
+	
+    <style>
+        input[type="radio"] {
+            display: none;
+        }
+        input[type="radio"]:checked + .badge {
+            border: 2px solid #000;
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        .badge {
+            cursor: pointer;
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+		.priority-high {
+			background-color: #ffebee;
+			color: #d32f2f;
+			border: 1px solid #ffcdd2;
+		}
+		.priority-medium {
+			background-color: #fffde7;
+			color: #f57f17;
+			border: 1px solid #fff9c4;
+		}
+		.priority-low {
+			background-color: #e8f5e9;
+			color: #388e3c;
+			border: 1px solid #c8e6c9;
+		}
+		
+    </style>
 </head>
 
 <body>
@@ -31,21 +67,25 @@
                     <div th:if="${#fields.hasErrors('content')}" th:errors="*{content}" class="error-message"></div>
                 </div>
 				
-				<div class="form-group">
-					<label for="priority">優先度：</label>
-					<select id="priority" th:field="*{priority}" class="form-control">
-						<option value="">-- 選択してください --</option>
-						<option th:each="p :  ${priorities}" th:value="${p}" th:text="${p.label}"></option>
-					</select>
-					<div th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}" class="error"></div>
-				</div>
+                <div class="form-group">
+                    <label>優先度：</label>
+                    <div style="display: flex; gap: 12px; align-items: center; margin-top: 8px;">
+                        <label th:each="p : ${priorities}" style="cursor: pointer;">
+                            <input type="radio" th:field="*{priority}" th:value="${p}">
+                            <span class="badge" 
+                                  th:classappend="${p.name() == 'HIGH' ? 'priority-high' : (p.name() == 'MIDDLE' ? 'priority-medium' : 'priority-low')}" 
+                                  th:text="${p.label}">高</span>
+                        </label>
+                    </div>
+                    <div th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}" class="error-message"></div>
+                </div>
 
-				
                 <div class="form-button-container">
                     <button type="submit" class="btn btn-primary" th:text="${memo.id} != null ? '更新' : '作成'">作成</button>
                 </div>
             </form>
         </div>
+    </div>
     <script th:src="@{/js/common.js}"></script>
 </body>
 

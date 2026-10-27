@@ -7,6 +7,33 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    
+	<style>
+	        .badge {
+	            display: inline-block;
+	            padding: 2px 10px;
+	            font-size: 12px;
+	            font-weight: 500;
+	            border-radius: 4px;
+	            line-height: 1.5;
+	        }
+
+	        .priority-high {
+	            background-color: #fee2e2;
+	            color: #ef4444;
+	        }
+
+	        .priority-medium {
+	            background-color: #fef3c7;
+	            color: #d97706;
+	        }
+
+	        .priority-low {
+	            background-color: #dcfce7;
+	            color: #16a34a;
+	        }
+	    </style>
+
 </head>
 
 <body>
@@ -17,27 +44,27 @@
                 <i class="ri-add-circle-line"></i> 新規メモ
             </a>
         </div>
-
-        <div class="notes-grid">
-            <div class="note-card" th:each="memo : ${memos}">
-                <div class="note-card-header">
-                    <h3 class="note-card-title" th:text="${memo.title}">タイトル</h3>
-					<span class="badge" th:if="${memo.priority != null}" th:text="${memo.priority.label}">優先度</span>
-                </div>
-                <div class="note-card-content">
-                    <p class="note-card-text" th:text="${memo.content}">内容</p>
-                </div>
-                <div class="note-card-footer">
-                    <p class="note-date" th:text="${#temporals.format(memo.createdAt, 'yyyy/MM/dd HH:mm')}">日付</p>
-                    <div class="note-actions">
-                        <a th:href="@{|/memo/detail/${memo.id}|}" class="btn btn-primary">詳細</a>
-                        <a th:href="@{|/memo/delete/${memo.id}|}" class="btn btn-danger">
-                            削除
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+		
+		<div class="notes-grid">
+		    <div class="note-card" th:each="memo : ${memos}">
+		        <div class="note-card-header">
+		            <h3 class="note-card-title" th:text="${memo.title}">タイトル</h3>
+		            <span class="badge" th:if="${memo.priority != null}" th:classappend="${memo.priority.name() == 'HIGH' ? 'priority-high' : (memo.priority.name() == 'MIDDLE' ? 'priority-medium' : 'priority-low')}" th:text="${memo.priority.label}">優先度</span>
+		        </div>
+		        <div class="note-card-content">
+		            <p class="note-card-text" th:text="${memo.content}">内容</p>
+		        </div>
+		        <div class="note-card-footer">
+		            <p class="note-date" th:text="${#temporals.format(memo.createdAt, 'yyyy/MM/dd HH:mm')}">日付</p>
+		            <div class="note-actions">
+		                <a th:href="@{|/memo/detail/${memo.id}|}" class="btn btn-primary">詳細</a>
+		                <a th:href="@{|/memo/delete/${memo.id}|}" class="btn btn-danger">
+		                    削除
+		                </a>
+		            </div>
+		        </div>
+		    </div>
+		</div>
 
         <div th:if="${memos.isEmpty()}" class="empty-state">
             <p>メモがありません</p>
