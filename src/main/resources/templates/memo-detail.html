@@ -24,7 +24,10 @@
             </div>
 
             <div class="note-card-footer detail-footer">
-                <p class="note-date" th:text="${#temporals.format(memo.createdAt, 'yyyy/MM/dd HH:mm')}">作成日時</p>
+                <div>
+                    <p class="note-date" th:text="${#temporals.format(memo.createdAt, 'yyyy/MM/dd HH:mm')}">作成日時</p>
+                    <p class="note-priority" th:text="'優先度: ' + ${memo.priority}">優先度</p>
+                </div>
                 <div class="note-actions">
                     <a th:href="@{|/memo/edit/${memo.id}|}" class="btn btn-primary">編集</a>
                     <a th:href="@{|/memo/delete/${memo.id}|}" class="btn btn-danger">
