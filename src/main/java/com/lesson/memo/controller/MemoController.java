@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,20 +15,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lesson.memo.model.Memo;
+import com.lesson.memo.model.Priority;
 import com.lesson.memo.repository.MemoRepository;
-
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/memos")
 public class MemoController {
 
-    @Autowired
-    private MemoRepository memoRepository;
+    private final MemoRepository memoRepository;
+
+    public MemoController(MemoRepository memoRepository) {
+        this.memoRepository = memoRepository;
+    }
 
     @GetMapping
     public String list(Model model) {
@@ -38,13 +42,15 @@ public class MemoController {
     @GetMapping("/new")
     public String showForm(Model model) {
         model.addAttribute("memo", new Memo());
+        model.addAttribute("priorities", Priority.values());
         return "memo-form";
     }
 
     @PostMapping("/create")
     public String create(@ModelAttribute @Valid Memo memo,
-            BindingResult result) {
+            BindingResult result, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("priorities", Priority.values());
             return "memo-form";
         }
 
@@ -60,7 +66,7 @@ public class MemoController {
         Optional<Memo> memo = memoRepository.findById(id);
         if (memo.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return "not-found"; // エラー画面にリダイレクト
+            return "not-found";
         }
 
         model.addAttribute("memo", memo.get());
@@ -69,6 +75,8 @@ public class MemoController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model, HttpServletResponse response) {
+        model.addAttribute("priorities", Priority.values());
+
         if (model.containsAttribute("memo")) {
             return "memo-form";
         }
@@ -89,12 +97,13 @@ public class MemoController {
             @ModelAttribute @Valid Memo memo,
             BindingResult result,
             HttpServletResponse response,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            Model model) {
 
         Optional<Memo> opt = memoRepository.findById(id);
         if (opt.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return "not-found"; // エラー画面表示
+            return "not-found";
         }
 
         Memo memoToUpdate = opt.get();
@@ -102,11 +111,12 @@ public class MemoController {
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.memo", result);
             redirectAttributes.addFlashAttribute("memo", memo);
-            return "redirect:/memos/edit/" + id; // editにリダイレクト
+            return "redirect:/memos/edit/" + id;
         }
 
         memoToUpdate.setTitle(memo.getTitle());
         memoToUpdate.setContent(memo.getContent());
+        memoToUpdate.setPriority(memo.getPriority());
         memoToUpdate.setUpdatedAt(LocalDateTime.now());
         memoRepository.save(memoToUpdate);
 
@@ -124,5 +134,21 @@ public class MemoController {
         }
 
         return "redirect:/memos";
+    }
+    
+    @GetMapping("/search")
+    public String search(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        List<Memo> memoList;
+        
+        if (keyword == null || keyword.trim().isEmpty()) {
+            memoList = memoRepository.findAll();
+        } else {
+            memoList = memoRepository.findByTitleContaining(keyword);
+        }
+        
+        model.addAttribute("memos", memoList);
+        model.addAttribute("keyword", keyword);
+        
+        return "memo-list";
     }
 }
