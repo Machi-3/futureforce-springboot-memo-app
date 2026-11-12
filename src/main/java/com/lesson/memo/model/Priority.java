@@ -14,5 +14,4 @@ public enum Priority {
 	public String getLabel() {
 		return label;
 	}
-
 }
