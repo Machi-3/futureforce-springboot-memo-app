@@ -1,6 +1,7 @@
 package com.lesson.memo.controller;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ import com.lesson.memo.model.Memo;
 import com.lesson.memo.model.Priority;
 import com.lesson.memo.repository.MemoRepository;
 
+
 @Controller
 @RequestMapping("/memos")
 public class MemoController {
@@ -35,6 +37,7 @@ public class MemoController {
     @GetMapping
     public String list(Model model) {
         List<Memo> memos = memoRepository.findAll();
+        memos.sort(Comparator.comparing(Memo::getPriority, Comparator.nullsLast(Comparator.naturalOrder())));
         model.addAttribute("memos", memos);
         return "memo-list";
     }
@@ -50,7 +53,9 @@ public class MemoController {
     public String create(@ModelAttribute @Valid Memo memo,
             BindingResult result, Model model) {
         if (result.hasErrors()) {
+
             model.addAttribute("priorities", Priority.values());
+
             return "memo-form";
         }
 
@@ -78,12 +83,14 @@ public class MemoController {
         model.addAttribute("priorities", Priority.values());
 
         if (model.containsAttribute("memo")) {
+        	model.addAttribute("priorities", Priority.values());
             return "memo-form";
         }
 
         return memoRepository.findById(id)
                 .map(memo -> {
                     model.addAttribute("memo", memo);
+                    model.addAttribute("priorities", Priority.values());
                     return "memo-form";
                 })
                 .orElseGet(() -> {

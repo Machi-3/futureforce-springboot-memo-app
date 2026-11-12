@@ -31,8 +31,8 @@ public class Memo {
     @NotBlank(message = "内容を入力してください")
     @Column(nullable = false, length = 1000)
     private String content;
-
-    @NotNull(message = "優先度を選択してください")
+    
+    @NotNull(message = "優先度は必須項目です")
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
